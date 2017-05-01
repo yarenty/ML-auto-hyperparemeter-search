@@ -9,13 +9,17 @@ When one have our initial data and one don't know what ML algorithm to use,
 we will perform initial "wide assignment" where one will run some default algorithms with some default (and different) parameters.
 Output of this first step will give us a table where columns will be algorithms, parameters, and accuracy (or error: MSE etc)
 
-A| P1| P2| P3| P4| ....| ACCU
-GBM| 0.1| 10| 0.3|... |0.75
-GBM| 0.4| 10| 0.3|... |0.76
-GBM| 0.8| 10| 0.3|... |0.72
-GBM| 0.1| 3| 0.3|... |0.78
-DL| - | 70| 0.8|... |0.71
-DL| - | 20| 0.8|... |0.72
+
+
+
+A | P1 | P2 | P3 | P4 | ... | ACCU
+:--- | ---: | ---:| ---:| ---:| ---:| --:
+GBM| 0.1| 10| 0.3| |... |0.75
+GBM| 0.4| 10| 0.3| |... |0.76
+GBM| 0.8| 10| 0.3| |... |0.72
+GBM| 0.1| 3| 0.3| |... |0.78
+DL| - | 70| 0.8| |... |0.71
+DL| - | 20| 0.8| |... |0.72
 
 Size of this table  will be defined on first stage - lets say 200 rows.
 
