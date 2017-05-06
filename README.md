@@ -9,6 +9,9 @@ Initial idea was covered by the need to find optimal hyperparameters, and there 
 
 This one is simpler version - you just need to keep in mind that we will have two layers of machine learnings.
 
+More in [motivation](motivation/modivation.md)
+
+
 ## Problem
 When you have data, you want to predict / learn something from that data, but you don't know what ML algorithm to use,
  and even when you know algorithm - you don't know what parameters to use to get best results.
@@ -52,10 +55,10 @@ However I would like to test here possibilities of using RF/GBM or even linear r
 //But this part is my "future" thinking - we do not need to explore this on current stage.
 
 
-## TODO
-- get initial data (airlines?)
-- run different algorithms on that data (step 1: just linear)
-- run ML on top of output of linear output with different params
+## TODO - PROGRESS
+1. get initial data (airlines) - DONE
+- run some algorithms on that data (step 1: just linear) - DONE
+- run ML on top of output of linear output with different params - WIP
 - check if predicted algo params from first layer - will get better results
 
 
