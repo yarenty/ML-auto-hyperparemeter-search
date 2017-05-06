@@ -9,7 +9,7 @@ Initial idea was covered by the need to find optimal hyperparameters, and there 
 
 This one is simpler version - you just need to keep in mind that we will have two layers of machine learnings.
 
-More in [motivation](motivation/modivation.md)
+More in [motivation](motivation/motivation.md)
 
 
 ## Problem
