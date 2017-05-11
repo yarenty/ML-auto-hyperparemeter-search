@@ -61,7 +61,7 @@ GLM Test
 "_early_stopping":true,  
 "_beta_constraints":null,  
 "_max_active_predictors":5000,  
-"_stdOverride":fals  
+"_stdOverride":false  
 
 
 ## OUTPUT

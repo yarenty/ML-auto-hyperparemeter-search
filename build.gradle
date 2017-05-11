@@ -40,14 +40,15 @@ buildscript {
 // Configure project properties
 //
 ext {
-    // Scala binary version
-    scalaBinaryVersion = '2.10'
-    scalaVersion = '2.10.6'
+    // Spark version
+    sparkVersion = '2.0'
+    // Latest stable version for the specified version of Spark
+    spWaterVersion = "${sparkVersion}.0"
+    
+//    h2oVersion = '3.10.3.4'
 
-    h2oVersion = '3.10.3.4'
-
-    // scalaBinaryVersion = '2.11'
-    // scalaVersion = '2.11.8'
+    scalaBinaryVersion = '2.11'
+    scalaVersion = '2.11.8'
 }
 
 // In this section you declare where to find the dependencies of your project
@@ -79,24 +80,30 @@ repositories {
         url "http://repository.apache.org/content/groups/snapshots"
     }
 
-    maven {
-        url "http://192.168.128.106:10101/content/repositories/snapshots/"
-    }
-
     // Enable 'maven local' for resolving your locally cached dependencies
     // Useful for cross development for example with h2o-dev
+    if (spWaterVersion.endsWith("SNAPSHOT")) mavenLocal()
 }
 
 // This section declares the dependencies for your production and test code
 dependencies {
 
-    compile group: 'ai.h2o', name: 'h2o-core', version: "$h2oVersion"
-    compile group: 'ai.h2o', name: 'h2o-algos', version: "$h2oVersion"
+    // Sparkling Water Core
+    compile("ai.h2o:sparkling-water-core_${scalaBinaryVersion}:${spWaterVersion}") {
+        exclude group: "javax.servlet", module: "servlet-api"
+    }
+    // Sparkling Water Examples (optional)
+    compile("ai.h2o:sparkling-water-examples_${scalaBinaryVersion}:${spWaterVersion}")
+    // Scala project needs dependency on Scala library
+    compile "org.scala-lang:scala-library:$scalaVersion"
+    
+//    compile group: 'ai.h2o', name: 'h2o-core', version: "$h2oVersion"
+//    compile group: 'ai.h2o', name: 'h2o-algos', version: "$h2oVersion"
 
 //    compile group: 'ai.h2o', name: 'h2o-genmodel', version: "$h2oVersion"
 
-    compile group: 'ai.h2o', name: "h2o-scala_${scalaBinaryVersion}", version: "$h2oVersion"
-    compile group: 'ai.h2o', name: 'h2o-app', version: "$h2oVersion"
+//    compile group: 'ai.h2o', name: "h2o-scala_${scalaBinaryVersion}", version: "$h2oVersion"
+//    compile group: 'ai.h2o', name: 'h2o-app', version: "$h2oVersion"
 
     // Scala project needs dependency on Scala library
     compile "org.scala-lang:scala-library:$scalaVersion"
@@ -138,11 +145,8 @@ tasks.withType(ScalaCompile) {
     ScalaCompileOptions.metaClass.daemonServer = true
     ScalaCompileOptions.metaClass.fork = true
     ScalaCompileOptions.metaClass.useAnt = false
-    ScalaCompileOptions.metaClass.useCompileDaemon = false
-
-//    scalaCompileOptions.useCompileDaemon = false
-//    scalaCompileOptions.useAnt = false
-//    scalaCompileOptions.additionalParameters = ['-target:jvm-1.6']
+    ScalaCompileOptions.metaClass.useCompileDaemon = true
+    
 }
 
 // In resulting jar include Scala binary version
@@ -210,12 +214,20 @@ shadowJar {
         // to run inside Spark environment providing some jars
         // (like hadoop, aws) on classpath
 
+        
         //SCALA dependency
         include(dependency("org.scala-lang:scala-library"))
         include(dependency("org.scala-lang:scala-reflect"))
         include(dependency("org.scalaz:scalaz-core_${scalaBinaryVersion}"))
 
         //H2O
+
+        include(dependency("ai.h2o:sparkling-water-core_${scalaBinaryVersion}"))
+        include(dependency("ai.h2o:sparkling-water-examples_${scalaBinaryVersion}"))
+        include(dependency("ai.h2o:sparkling-water-repl_${scalaBinaryVersion}"))
+        include(dependency("ai.h2o:sparkling-water-ml_${scalaBinaryVersion}"))
+        include(dependency("ai.h2o:h2o-web"))
+        include(dependency("ai.h2o:h2o-persist-hdfs"))
         include(dependency("ai.h2o:h2o-core"))
         include(dependency("ai.h2o:h2o-scala_${scalaBinaryVersion}"))
         include(dependency("ai.h2o:h2o-app"))
@@ -225,8 +237,7 @@ shadowJar {
         include(dependency("ai.h2o:h2o-avro-parser"))
         include(dependency("ai.h2o:reflections"))
         include(dependency("ai.h2o:google-analytics-java"))
-//        include(dependency("ai.h2o:h2o-web"))
-//        include(dependency("ai.h2o:h2o-persist-hdfs"))
+
 
         //H2O dependency
         include(dependency("joda-time:joda-time"))
@@ -267,8 +278,8 @@ shadowJar {
         include(dependency("org.jfree:jcommon"))
 
         //TO REMOVE
-//        exclude(dependency("org.eclipse.jetty.aggregate:jetty-servlet"))
-//        exclude(dependency("org.eclipse.jetty:jetty-server"))
-//        exclude(dependency("org.eclipse.jetty:jetty-plus:8.1.17.v20150415"))
+        exclude(dependency("org.eclipse.jetty.aggregate:jetty-servlet"))
+        exclude(dependency("org.eclipse.jetty:jetty-server"))
+        exclude(dependency("org.eclipse.jetty:jetty-plus:8.1.17.v20150415"))
     }
 }
