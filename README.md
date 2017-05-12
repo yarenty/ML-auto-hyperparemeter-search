@@ -80,6 +80,7 @@ GLM initial output on airlines:
 ```      
 this is ... bad  - still better on blind guess but need to narrow down data/ params   
 still this is 1st round!!!   
-
+lets investigate predicted output - probably too much similar maxes!!!  
 lets try with DRF?  
+
       
