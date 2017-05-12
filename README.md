@@ -62,7 +62,24 @@ However I would like to test here possibilities of using RF/GBM or even linear r
 - check if predicted algo params from first layer - will get better results
 
 
+
 ## Conclusion
 
 WIP
 
+
+
+GML
+
+GLM initial output on airlines:
+```   
+                 blind guess=0.6714124454842434
+          initial max values=0.6877173209002059;0.6877173209002059;0.6877018721171844;0.6877018721171844;0.6877018721171844
+  predicted by DRF inception=0.6761178016662598;0.6761178016662598;0.6761178016662598;0.6761178016662598;0.6761178016662598
+           real after retest=0.6877018721171844;0.6877018721171844;0.6877018721171844;0.6877018721171844;0.6877018721171844
+```      
+this is ... bad  - still better on blind guess but need to narrow down data/ params   
+still this is 1st round!!!   
+
+lets try with DRF?  
+      
