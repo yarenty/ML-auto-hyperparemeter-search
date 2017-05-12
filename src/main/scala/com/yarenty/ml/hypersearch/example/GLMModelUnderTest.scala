@@ -24,12 +24,12 @@ object GLMModelUnderTest {
 
     val lr = new GLM(params)
     val model = lr.trainModel.get
-    println(model._output)
-    println(model._output._cross_validation_metrics)
-    println(model._output._cross_validation_metrics.auc_obj())
-    println(model._output._cross_validation_metrics.auc_obj()._auc)
-    
-    0.5
+//    println(model._output)
+//    println(model._output._validation_metrics)
+//    println(model._output._validation_metrics.auc_obj())
+    println(model._output._validation_metrics.auc_obj()._auc)
+
+    model._output._validation_metrics.auc_obj()._auc
   }
 
 
