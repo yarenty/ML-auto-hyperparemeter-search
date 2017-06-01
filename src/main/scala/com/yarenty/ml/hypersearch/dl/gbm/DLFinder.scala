@@ -33,7 +33,7 @@ class DLFinder(implicit val sc: SparkContext,
   }
 
 
-  def initialRound(train:H2OFrame, valid:H2OFrame): Array[Vector[Double]] = {
+  def initialRound(train:H2OFrame, valid:H2OFrame): Array[Vector[Any]] = {
     var hp1 = Vector[Double]()
     var hp2 = Vector[Double]()
     var hp3 = Vector[Array[Int]]()

@@ -34,9 +34,9 @@ class GBMFinder(implicit val sc: SparkContext,
   }
 
 
-  def initialRound(train:H2OFrame, valid:H2OFrame): Array[Vector[Double]] = {
-    var hp1 = Vector[Double]()
-    var hp2 = Vector[Double]()
+  def initialRound(train:H2OFrame, valid:H2OFrame): Array[Vector[Any]] = {
+    var hp1 = Vector[Int]()
+    var hp2 = Vector[Int]()
     var hp3 = Vector[Double]()
     var hp_out = Vector[Double]()
     val params = GBMHyperParams.getParams()
