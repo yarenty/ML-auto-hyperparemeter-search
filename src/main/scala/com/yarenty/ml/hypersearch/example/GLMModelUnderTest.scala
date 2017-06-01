@@ -1,5 +1,6 @@
 package com.yarenty.ml.hypersearch.example
 
+import com.yarenty.ml.hypersearch.getParser
 import hex.glm.GLM
 import hex.glm.GLMModel.GLMParameters
 import water.fvec.H2OFrame

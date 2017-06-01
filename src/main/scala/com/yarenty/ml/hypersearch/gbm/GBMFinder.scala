@@ -1,9 +1,9 @@
-package com.yarenty.ml.hypersearch.example
+package com.yarenty.ml.hypersearch.gbm
 
-import com.yarenty.ml.hypersearch.example.GLMHyperParams.params
+import com.yarenty.ml.hypersearch.getParser
 import hex.glm.GLMModel.GLMParameters
 import org.apache.spark.SparkContext
-import org.apache.spark.h2o.{H2OContext, H2OFrame}
+import org.apache.spark.h2o.H2OContext
 import org.apache.spark.sql.{SQLContext, SparkSession}
 import water.fvec.{Frame, H2OFrame, Vec}
 import water.support.{H2OFrameSupport, SparkContextSupport, SparklingWaterApp}
@@ -11,18 +11,22 @@ import water.support.{H2OFrameSupport, SparkContextSupport, SparklingWaterApp}
 /**
   * Created by yarenty on 28/04/2017.
   */
-class Test(implicit val sc: SparkContext,
+class GBMFinder(implicit val sc: SparkContext,
            @transient override val sqlContext: SQLContext,
            @transient override val h2oContext: H2OContext)
   extends SparklingWaterApp with H2OFrameSupport {
 
-  import h2oContext._
-
 
   def split(in: H2OFrame): (H2OFrame, H2OFrame) = {
+    val keys = Array[String]("trainHyper.hex", "testHyper.hex")
+   split(in,keys)
+  }
+
+
+  def split(in: H2OFrame, keys:Array[String]): (H2OFrame, H2OFrame) = {
     import h2oContext.implicits._
 
-    val keys = Array[String]("trainHyper.hex", "testHyper.hex")
+
     val ratios = Array[Double](0.8, 0.2)
     val frs = splitFrame(in, keys, ratios)
     val (train, test) = (frs(0), frs(1))
@@ -30,25 +34,25 @@ class Test(implicit val sc: SparkContext,
   }
 
 
-  def initialRound(): Array[Vector[Double]] = {
+  def initialRound(train:H2OFrame, valid:H2OFrame): Array[Vector[Double]] = {
     var hp1 = Vector[Double]()
     var hp2 = Vector[Double]()
     var hp3 = Vector[Double]()
     var hp_out = Vector[Double]()
-    val params = GLMHyperParams.getParams()
-    for (a <- GLMHyperParams.alphas) {
-      for (l <- GLMHyperParams.lambdas) {
-        for (b <- GLMHyperParams.betas) {
+    val params = GBMHyperParams.getParams()
+    for (a <- GBMHyperParams.max_depth) {
+      for (l <- GBMHyperParams.nbins_cats) {
+        for (b <- GBMHyperParams.learn_rate_annealing) {
           hp1 = hp1 :+ a
           hp2 = hp2 :+ l
           hp3 = hp3 :+ b
-          params._alpha = Array(a)
-          params._lambda = Array(l)
-          params._beta_epsilon = b
+          params._max_depth = a
+          params._nbins_cats = l
+          params._learn_rate_annealing = b
 
-          val out = GLMModelUnderTest.calculate(params)
+          val out = GBMModelUnderTest.calculate(params,train,valid)
           hp_out = hp_out :+ out
-          println(s"alpha:$a, lambda:$l, beta:$b, out:$out")
+          println(s"depth:$a, cats bins:$l, annealing rate:$b, out:$out")
 
         }
       }
@@ -75,7 +79,7 @@ class Test(implicit val sc: SparkContext,
     var hp2 = Vector[Double]()
     var hp3 = Vector[Double]()
     var hp_out = Vector[Double]()
-    val params = GLMHyperParams.getParams()
+    val params = GBMHyperParams.getParams()
     for (a <- 0.0 to 1.0 by 0.1) {
       for (l <- 0.0 to 20.0 by 0.1) {
         for (b <- 1e-5 to 1e-3 by 1e-5) {
@@ -105,17 +109,17 @@ class Test(implicit val sc: SparkContext,
     arr
   }
 
-
+/*
   def prevPredict(): Array[Vector[Double]] = {
     var hp1 = Vector[Double]()
     var hp2 = Vector[Double]()
     var hp3 = Vector[Double]()
     
  
-    val params = GLMHyperParams.getParams()
-    for (a <- GLMHyperParams.alphas) {
-      for (l <- GLMHyperParams.lambdas) {
-        for (b <- GLMHyperParams.betas) {
+    val params = GBMHyperParams.getParams()
+    for (a <- GBMHyperParams.alphas) {
+      for (l <- GBMHyperParams.lambdas) {
+        for (b <- GBMHyperParams.betas) {
           hp1 = hp1 :+ a
           hp2 = hp2 :+ l
           hp3 = hp3 :+ b
@@ -133,13 +137,13 @@ class Test(implicit val sc: SparkContext,
   }
   
    
-
+*/
   
   
 }
 
 
-object Test extends SparkContextSupport {
+object GBMFinder extends SparkContextSupport {
 
   def main(args: Array[String]): Unit = {
 
@@ -151,10 +155,28 @@ object Test extends SparkContextSupport {
     // Start H2O services
     implicit val h2oContext = H2OContext.getOrCreate(sc)
 
-    val app = new Test()
+    val app = new GBMFinder()
+    val params = GBMHyperParams.getParams()
 
-//    val hp = app.initialRound()
-    val hp = app.prevPredict()
+
+
+    val datadir = "/opt/data/mercedes"
+
+
+
+    val input = new H2OFrame(getParser, new java.net.URI(s"${datadir}/train.csv"))
+    val names = input._names.drop(2) //ID,y
+    println(names.mkString(";"))
+    input.colToEnum(names)
+    val (train, valid) = app.split(input, Array("train_input.hex","valid_input.hex"))
+    val test = new H2OFrame(getParser, new java.net.URI(s"${datadir}/test.csv"))
+    test.colToEnum(names)
+    
+    val out = GBMModelUnderTest.calculate(params, train,valid)
+    
+    
+   val hp = app.initialRound( train,valid)
+/*    val hp = app.prevPredict()
 
     val vecs:Array[Vec] = for (h <- hp) yield {
       val v = Vec.makeZero(h.length)
@@ -188,7 +210,7 @@ object Test extends SparkContextSupport {
     
     val ids = app.getIds(out)
 
-    val params = GLMHyperParams.getParams()
+    val params = GBMHyperParams.getParams()
     
     println(" predicted best  output:")
     
@@ -231,6 +253,8 @@ object Test extends SparkContextSupport {
     println("     initial max values=" + initial.mkString(";"))
     println(" predicted by inception=" + pred.mkString(";"))
     println("      real after retest=" + real.mkString(";"))
+
+*/
 
   }
 }

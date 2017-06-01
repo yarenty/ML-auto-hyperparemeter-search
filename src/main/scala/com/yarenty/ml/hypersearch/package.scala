@@ -1,11 +1,11 @@
-package com.yarenty.ml.hypersearch
+package com.yarenty.ml
 
 import water.parser.{DefaultParserProviders, ParseSetup}
 
 /**
   * Created by yarenty on 11/05/2017.
   */
-package object example {
+package object hypersearch {
 
 
   def getParser: ParseSetup = {
