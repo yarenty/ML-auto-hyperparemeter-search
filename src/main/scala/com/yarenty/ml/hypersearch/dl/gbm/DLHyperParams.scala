@@ -22,11 +22,11 @@ object DLHyperParams {
     params._distribution //DistributionFamily.AUTO
     params._l1
     params._l2 = 0.1
-    params._epochs = 1000
-    params._hidden = Array(600,200,10)
-    params._hidden_dropout_ratios= Array(0.2,0.2,0.2)
-    params._input_dropout_ratio = 0.2
-    params._activation = Activation.RectifierWithDropout
+    params._epochs = 10
+    params._hidden = Array(600,300,100)
+    params._hidden_dropout_ratios= Array(0.4,0.4,0.4)
+    params._input_dropout_ratio = 0.4
+    params._activation = Activation..RectifierWithDropout
     
     
 

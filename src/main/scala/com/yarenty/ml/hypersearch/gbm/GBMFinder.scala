@@ -170,7 +170,7 @@ object GBMFinder extends SparkContextSupport {
     val out = GBMModelUnderTest.calculate(params, train,valid)
     
     
-   val hp = app.initialRound( train,valid)
+//   val hp = app.initialRound( train,valid)
 /*    val hp = app.prevPredict()
 
     val vecs:Array[Vec] = for (h <- hp) yield {
