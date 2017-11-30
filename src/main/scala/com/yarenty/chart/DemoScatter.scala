@@ -1,9 +1,8 @@
-package com.yarenty.ml.hypersearch
-
+package com.yarenty.chart
 
 import java.util.Random
-import org.jzy3d.analysis.AbstractAnalysis
-import org.jzy3d.analysis.AnalysisLauncher
+
+import org.jzy3d.analysis.{AbstractAnalysis, AnalysisLauncher}
 import org.jzy3d.chart.factories.AWTChartComponentFactory
 import org.jzy3d.colors.Color
 import org.jzy3d.maths.Coord3d

@@ -1,16 +1,10 @@
-package com.yarenty.ml.hypersearch
+package com.yarenty.chart
 
-
-import java.awt.BorderLayout
-import java.awt.Component
-import java.awt.event.WindowAdapter
-import java.awt.event.WindowEvent
+import java.awt.{BorderLayout, Component}
+import java.awt.event.{WindowAdapter, WindowEvent}
 import java.io.IOException
-import java.util
-import javax.swing.BorderFactory
-import javax.swing.JFrame
-import javax.swing.JPanel
-import javax.swing.border.Border
+import javax.swing.{BorderFactory, JFrame, JPanel}
+
 import net.miginfocom.swing.MigLayout
 import org.jzy3d.chart.Chart
 import org.jzy3d.chart2d.Chart2d
@@ -115,8 +109,6 @@ object Demo2DGraph {
     val columns = "[500px,grow]"
     setLayout(new MigLayout("", columns, lines))
     var k = 0
-
-    import scala.collection.JavaConversions._
 
     for (c <- charts) {
       addChart(c, {
