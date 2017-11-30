@@ -16,59 +16,71 @@ import org.jzy3d.plot3d.rendering.view.CroppingView
 import org.jzy3d.plot3d.rendering.view.View
 
 
-object WorldMapDemo {
+object WorldMapDemo extends AbstractAnalysis {
+
+
   @throws[Exception]
   def main(args: Array[String]): Unit = {
-    AnalysisLauncher.open(new WorldMapDemo)
+    AnalysisLauncher.open(this)
   }
-}
 
-class WorldMapDemo extends AbstractAnalysis {
   @throws[Exception]
-  override def init(): Unit = { // Create the world map chart
+  override def init(): Unit = {
+
+    // Create the world map chart
     val f = new AWTChartComponentFactory() {
       override def newView(scene: Scene, canvas: ICanvas, quality: Quality) = new CroppingView(getFactory, scene, canvas, quality)
     }
+
     chart = f.newChart(Quality.Advanced, "awt")
+
+
     // Instantiate world map and parse the file
     val worldMap = new WorldMapLoader()
     worldMap.parseFile("world_map.csv")
+
+
     // Add world map line stripe to chart
     chart.getScene.getGraph.add(worldMap.lineStrips)
+
+
     // Set axis labels for chart
     val axeLayout = chart.getAxeLayout
     axeLayout.setXAxeLabel("Longitude (deg)")
     axeLayout.setYAxeLabel("Latitude (deg)")
     axeLayout.setZAxeLabel("Altitude (km)")
+
     // Set precision of tick values
     axeLayout.setXTickRenderer(new IntegerTickRenderer)
     axeLayout.setYTickRenderer(new IntegerTickRenderer)
     axeLayout.setZTickRenderer(new IntegerTickRenderer)
+
     // Define ticks for axis
     axeLayout.setXTickProvider(new SmartTickProvider(10))
     axeLayout.setYTickProvider(new SmartTickProvider(10))
     axeLayout.setZTickProvider(new SmartTickProvider(10))
+
     // Set map viewpoint
     chart.getView.setViewPoint(new Coord3d(-2 * Math.PI / 3, Math.PI / 4, 0))
+
     // Animate bounds change for demo
     Executors.newCachedThreadPool.execute(shiftBoundsTask)
   }
 
   private def shiftBoundsTask = new Runnable() {
     val step = 1
+
     override
 
     def run(): Unit = {
-      while ( {
-        true
-      }) {
+      while (true) {
 
         val b = chart.getView.getBounds
         if (b.getXRange.getMin > 0) {
           chart.getView.setScaleX(b.getXRange.add(-90), false)
           chart.getView.setScaleY(b.getYRange.add(-90), false)
         }
-          chart.getView.setScaleX(b.getXRange.add(step), false)
+        chart.getView.setScaleX(b.getXRange.add(step), false)
         chart.getView.setScaleY(b.getYRange.add(step), false)
         chart.getView.shoot()
         try
